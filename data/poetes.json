@@ -1,0 +1,104 @@
+[
+    {
+        "name": ["غربي محمد ادريس","غربي", "ادريس"],
+        "id": "0",
+        "country":["العراق", "عراق"],
+        "data":[
+            {
+                "title": "خذ في البكا إن الخليط مقوض",
+                "id": "0",
+                "url": "https://www.aldiwan.net/poem71682.html",
+                "sea": "الكامل",
+                "tags": "حزينة",
+                "lines": "30"
+            },
+            {
+                "title": "الخيل والليل والبيداءُ تعرفني",
+                "id": "1",
+                "url": "https://www.aldiwan.net/poem20938.html",
+                "sea": "الكامل",
+                "tags": "مدح",
+                "lines": "38"
+            },
+            {
+                "title": "أفيقا خمار الهم نغصني الخمرا",
+                "id": "2",
+                "url": "https://www.aldiwan.net/poem10630.html",
+                "sea": "الطويل",
+                "tags": "عام",
+                "lines": "31"
+            },
+            {
+                "title": "قطعت بسيري كل يهماء مفزع",
+                "id": "3",
+                "url": "https://www.aldiwan.net/poem10629.html",
+                "sea": "الطويل",
+                "tags": "عام",
+                "lines": "13"
+            },
+            {
+                "title": "هينا فقدت من الرجال بليدا",
+                "id": "4",
+                "url": "https://www.aldiwan.net/poem10630.html",
+                "sea": "الكامل",
+                "tags": "عام",
+                "lines": "15"
+            },
+            {
+                "title": "أتظعن يا قلب مع من ظعن",
+                "id": "5",
+                "url": "https://www.aldiwan.net/poem10615.html",
+                "sea": "الطويل",
+                "tags": "عام",
+                "lines": "31"
+            },
+            {
+                "title": "أفيقا خمار الهم نغصني الخمرا",
+                "id": "6",
+                "url": "https://www.aldiwan.net/poem10630.html",
+                "sea": "المتقارب",
+                "tags": "غزلية",
+                "lines": "14"
+            },
+            {
+                "title": "شغلي عن الربع أن أسائله",
+                "id": "7",
+                "url": "https://www.aldiwan.net/poem10614.html",
+                "sea": "المنسرح",
+                "tags": "عام",
+                "lines": "19"
+            }
+        ]
+    },
+    {
+        "name": ["أبو عبادة البحتري", "البحتري", "بحتري"],
+        "id": "1",
+        "country":["اليمن", "يمن"],
+        "data":[
+            {
+                "title": "فدتك يدي من عاتب ولسانيا",
+                "id": "0",
+                "url": "https://www.aldiwan.net/poem66867.html",
+                "sea": "الطويل",
+                "tags": "مدح",
+                "lines": "10"
+            },
+            {
+                "title": "باكرتنا بواكر الوسمي",
+                "id": "1",
+                "url": "https://www.aldiwan.net/poem66865.html",
+                "sea": "الخفيف",
+                "tags": "مدح",
+                "lines": "11"
+            },
+            {
+                "title": "ربع خلا من بدره مغناه",
+                "id": "2",
+                "url": "https://www.aldiwan.net/poem66856.html",
+                "sea": "الكامل",
+                "tags": "رومنسية",
+                "lines": "25"
+            }
+        ]
+    }
+]
