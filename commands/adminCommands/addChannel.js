@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, ChannelType } = require('discord.js');
 const { ChannelManager } = require('../../centralUnits/channelsManager.js');
-const { ErrorUnit } = require('../../centralUnits/errorUnit.js');
+const { ErrorUnit, RandomErrors } = require('../../centralUnits/errorUnit.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -12,21 +12,21 @@ module.exports = {
                       .setRequired(true)
                       .addChannelTypes(ChannelType.GuildText)
               ),
-    on: true,         
+    on: true,
+    path: { 'adminCommands': [0, 0] },         
     async execute(interaction){
         try {
             await interaction.deferReply({ ephemeral: true });
             const targetChannel = await interaction.options.getChannel('الروم');
             const guild = interaction.guild;
-            if(!guild){
-                interaction.editReply(`هذا الأمر صالح في السيرفر فقط!!`);
-                return;
-            };
+            if(!guild) throw new RandomErrors('هذا الأمر صالح في السيرفر فقط!! 😘');
+
             const channelManager = new ChannelManager(interaction);
             await channelManager.addChannel(guild, targetChannel, 'Administrator');
             return ;
         } catch (error) {
             await ErrorUnit.throwError(error, interaction, 'حدث خطأ أثناء تحديد الروم');
+            return;
         }
     }         
 }

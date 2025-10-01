@@ -1,6 +1,6 @@
 const {chromium} = require('playwright');
 const { ScarpingError } = require('../centralUnits/errorUnit.js');
-const { random } = require('../centralUnits/randomItem.js');
+const { random } = require('../centralUnits/usefulFenctions.js');
 
 async function expressionScarping(url){
     try {

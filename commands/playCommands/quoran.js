@@ -1,9 +1,8 @@
 const { EmbedBuilder, ComponentType } = require('discord.js');
 const quoran = require('../../data/quoran.json');
 const { footer } = require('../../centralUnits/footer.js');
-const { poemDisplay } = require('../../centralUnits/textDisplay.js');
-const { fetching } = require('../../centralUnits/fetching.js');
-const { ErrorUnit, CollectorError } = require('../../centralUnits/errorUnit.js');
+const { poemDisplay, fetching } = require('../../centralUnits/usefulFenctions.js');
+const { ErrorUnit } = require('../../centralUnits/errorUnit.js');
 
 module.exports = {
     name: ['سورة', 'سوره'],
@@ -72,7 +71,7 @@ module.exports = {
                     await buttons.edit({ content: `صفحة ${body.currentPage} من ${pagesNum}`, components:[footer] });
                     return;
                 } catch (error) {
-                    throw new CollectorError(error.message);
+                    throw error;
                 }
             });
 
@@ -81,13 +80,13 @@ module.exports = {
                     await head.edit({content: `${msg.author} \nلقد إنتهى الوقت المحدد❌\nيرجى المحاولة لاحقا ❤️`});
                     return;
                 } catch (error) {
-                    throw new CollectorError(error.message);
+                    throw new error;
                 }
             });
                             
 
         } catch (error) {
-            await ErrorUnit(error, msg, 'حدث خطأ أثناء تنفيذ الأمر سورة');
+            await ErrorUnit(error, msg, 'حدث خطأ أثناء تنفيذ الأمر \`سورة\` 🥲');
             return;
         }
     }

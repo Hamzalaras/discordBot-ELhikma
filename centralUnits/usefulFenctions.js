@@ -1,3 +1,19 @@
+const { FetchingError } = require('./errorUnit.js');
+
+function random(array){
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+async function fetching(url) {
+    try {  
+        const fetching = await fetch(url);
+        const res = await fetching.json();
+        return res;
+    } catch (error) {
+        throw new FetchingError(error.message);
+    }
+}
+
 function poemDisplay(customId, currentPage, curentLines, poemLines, pagesNum, linesPerPage) {
     if (customId === 'next' && currentPage < pagesNum) { 
         currentPage++;
@@ -15,4 +31,4 @@ function poemDisplay(customId, currentPage, curentLines, poemLines, pagesNum, li
     return { content, currentPage, curentLines };
 }
 
-module.exports = { poemDisplay };
+module.exports = { random, fetching, poemDisplay };

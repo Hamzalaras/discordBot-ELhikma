@@ -1,7 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
-const { random } = require('../../centralUnits/randomItem.js');
+const { random } = require('../../centralUnits/usefulFenctions.js');
 const proverbs = require('../../data/proverbs.json');
-const { ErrorUnit } = require('../../centralUnits/errorUnit.js');
+const { ErrorUnit, RandomErrors } = require('../../centralUnits/errorUnit.js');
 
 function getPart(countryOrPart) { 
     const pathTo = [];
@@ -18,7 +18,7 @@ function getPart(countryOrPart) {
     const part = proverbs[randomPath.countryIndex].data[randomPath.partIndex];
     part.country = proverbs[randomPath.countryIndex].country[0];
 
-    return  part ;
+    return part ;
 }   
 
 module.exports = {
@@ -31,30 +31,27 @@ module.exports = {
                                   (item?.data ? random(item.data) : getPart(countryOrPart)) :
                                   random(random(proverbs).data) ;
 
-            if(!part){
-                await msg.channel.send({content: `${msg.author} \n لم يتم العثور على طلبكم: ~${countryOrPart}~ 🥲`});
-                return;
-            }               
+            if(!part) throw new RandomErrors(`لم يتم العثور على طلبكم: \*\*${countryOrPart}\*\* 🥲`);
 
-            const randomsection = random(part.sections);
-            const randomProverb = random(randomsection.proverbs);
+            const randomProverb = random(random(part.sections).proverbs);
 
             const country = part.country ?? item?.country ?? 'غير محدد';
 
+            const avatar = msg.client.user.displayAvatarURL({ dynamic: true, size: 1024 });
             const informationEmbed = new EmbedBuilder()
-                                .setColor('DarkAqua')
-                                .setTitle('مثل شعبي')
-                                .setDescription(`📜مثل شعبي من: ${country}. \n 🧠يندرج تحت موضوع: ${part.part[0]}. 🚪من باب: ${randomsection.name}. \n\n`)
-                                .addFields(
-                                    { name: `المثل الشعبي:`, value: `${randomProverb.proverb}`},
-                                    { name: `بالفصحة:`, value: `${randomProverb.version}`},
-                                    { name: `الشرح:`, value: `${randomProverb.explication}`}
-                                );
+                                        .setAuthor({ name: `${msg.client.user.username}`, iconURL: `${avatar}`})
+                                        .setColor('DarkAqua')
+                                        .setTitle('مثل شعبي')
+                                        .setDescription(`📜مثل شعبي من: \*\*${country}\*\* .\n🧠يندرج تحت موضوع: \*\*${part.part[0]}\*\*، 🚪من باب: \*\*${randomsection.name}\*\* . \n\n`)
+                                        .addFields(
+                                            { name: `المثل الشعبي:`, value: `${randomProverb.proverb}`},
+                                            { name: `بالفصحة:`, value: `${randomProverb.version}`},
+                                            { name: `الشرح:`, value: `${randomProverb.explication}`}
+                                        );
             await msg.channel.send({content: `${msg.author}`, embeds: [informationEmbed]});                    
             return; 
-
         } catch (error) {
-            await ErrorUnit.throwError(error, msg, 'حدث خطأ أثناء تنفيذ الأمر أمثال');
+            await ErrorUnit.throwError(error, msg, 'حدث خطأ أثناء تنفيذ الأمر \`أمثال\` 🥲');
             return;
         }
     }
