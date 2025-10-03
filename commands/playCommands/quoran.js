@@ -1,8 +1,8 @@
-const { EmbedBuilder, ComponentType } = require('discord.js');
+const { EmbedBuilder, ComponentType, ActionRowBuilder } = require('discord.js');
 const quoran = require('../../data/quoran.json');
-const { footer } = require('../../centralUnits/footer.js');
+const { buttons } = require('../../centralUnits/footer.js');
 const { poemDisplay, fetching } = require('../../centralUnits/usefulFenctions.js');
-const { ErrorUnit } = require('../../centralUnits/errorUnit.js');
+const { ErrorUnit, FalseInput, RandomErrors } = require('../../centralUnits/errorUnit.js');
 
 module.exports = {
     name: ['سورة', 'سوره'],
@@ -15,10 +15,7 @@ module.exports = {
                             null :
                             surrah :
                             Math.floor(Math.random() * 114) + 1;
-            if(!surrahNum || surrahNum > 114 || surrahNum < 1){
-                await msg.channel.send({content: `${msg.author}\nيرجى استخدام الأمر \`\`سورة\`\` بالشكل الصحيح  ❤️`});
-                return;
-            }   
+            if(!surrahNum || surrahNum > 114 || surrahNum < 1) throw new FalseInput('سورة'); 
   
             const url = !isNaN(ayah) ? 
                         `http://api.alquran.cloud/v1/ayah/${surrahNum}:${ayah}` : 
@@ -26,22 +23,23 @@ module.exports = {
 
             const res = await fetching(url);            
             if(res.status === 'NOT FOUND'){
-                await msg.channel.send({content: `${msg.author} \n يرجى ادخال معلومات صحيحة!! ❤️`});
-                return;
+                throw new RandomErrors('يرجى ادخال معلومات صحيحة!! 😘');
             }else if(res.status !== 'OK'){
-                await msg.channel.send({content: `${msg.author} \n لقد حدث خطا أثناء البحث عن طلبكم 🥲\nيرجى المحاولة لاحقا ❤️`});
-                return;
+                throw new RandomErrors('لقد حدث خطا أثناء البحث عن طلبكم 🥲\nيرجى المحاولة لاحقا 😘');
             }
 
             const data = res.data;
             const [ayatContent, surrahName, numberOfAyahs, type] = data.text ? 
                             [data.text, data.surah.name, data.surah.numberOfAyahs, data.surah.revelationType] : 
                             [data.ayahs.map(ayah => ayah.text), data.name, data.numberOfAyahs, data.revelationType]; 
-            
+
+            const avatar = msg.client.user.displayAvatarURL({ dynamic: true, size: 1024 });
             const informationEmbed = new EmbedBuilder()
+                                         .setColor('DarkAqua')
+                                         .setAuthor({ name: `${msg.client.user.username}`, iconURL: `${avatar}`})
                                          .setTitle(`${surrahName}`)
                                          .setDescription(
-                                            `\*\*أياتها\*\*: ${numberOfAyahs}\n \*\*نوعها\*\*: ${type}`
+                                            `أياتها: \*\*${numberOfAyahs}\*\* .\nنوعها: \*\*${type}\*\*`
                                          );
             if(!Array.isArray(ayatContent)){
                 await msg.channel.send({content: `${msg.author}`, embeds: [informationEmbed]});
@@ -52,13 +50,14 @@ module.exports = {
             let currentPage = 1;
             let curentLines = 0;
             const pagesNum = Math.ceil(ayatContent.length / 4);
-
             let body = poemDisplay(false, currentPage, curentLines, ayatContent, pagesNum, 4);
             const filter = (i) => i.user.id === msg.author.id;
+
+            const row = new ActionRowBuilder().addComponents(buttons);
             const head = await msg.channel.send({content: `${msg.author}`, embeds: [informationEmbed]});
             const ReponseBody = await msg.channel.send({content: `${body.content}`});
-            const buttons = await msg.channel.send({ content: `صفحة ${body.currentPage} من ${pagesNum}`, components:[footer] });
-            const collector = buttons.createMessageComponentCollector({ componentType: ComponentType.Button, time: 300_000, filter});
+            const footer = await msg.channel.send({ content: `صفحة ${body.currentPage} من ${pagesNum}`, components:[row] });
+            const collector = footer.createMessageComponentCollector({ componentType: ComponentType.Button, time: 300_000, filter});
 
             collector.on('collect', async interaction =>{
                 try {
@@ -68,7 +67,7 @@ module.exports = {
                     curentLines = body.curentLines;
 
                     await ReponseBody.edit({content: `${body.content}`});
-                    await buttons.edit({ content: `صفحة ${body.currentPage} من ${pagesNum}`, components:[footer] });
+                    await footer.edit({ content: `صفحة ${body.currentPage} من ${pagesNum}`, components:[row] });
                     return;
                 } catch (error) {
                     throw error;
@@ -77,16 +76,18 @@ module.exports = {
 
             collector.on('end', async () =>{
                 try {    
-                    await head.edit({content: `${msg.author} \nلقد إنتهى الوقت المحدد❌\nيرجى المحاولة لاحقا ❤️`});
+                    informationEmbed.setDescription('لقد إنتهى الوقت المحدد لهذه العملية ❌\nيرجى المحاولة مرة أخرى 😘').setColor('DarkGrey');
+                    await head.edit({embeds: [informationEmbed]});
+                    buttons.forEach(b => b.setDisabled(true));
+                    await footer.edit({components:[row]});
                     return;
                 } catch (error) {
                     throw new error;
                 }
             });
-                            
-
+            return;
         } catch (error) {
-            await ErrorUnit(error, msg, 'حدث خطأ أثناء تنفيذ الأمر \`سورة\` 🥲');
+            await ErrorUnit.throwError(error, msg, 'حدث خطأ أثناء تنفيذ الأمر \`سورة\` 🥲');
             return;
         }
     }

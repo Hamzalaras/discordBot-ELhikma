@@ -1,6 +1,6 @@
-const { EmbedBuilder,  ComponentType} = require('discord.js');
+const { EmbedBuilder,  ComponentType, ActionRowBuilder} = require('discord.js');
 const poetes = require('../../data/poetes.json');
-const { footer } = require('../../centralUnits/footer.js');
+const { buttons } = require('../../centralUnits/footer.js');
 const { random, poemDisplay } = require('../../centralUnits/usefulFenctions.js');
 const { poemScarping } = require('../../scarping/poem.js');
 const { ErrorUnit, RandomErrors } = require('../../centralUnits/errorUnit.js');
@@ -52,16 +52,15 @@ module.exports = {
 
             const poemLines = await poemScarping(poem.url);
             const pagesNum = Math.ceil(poemLines.length / 6);
-
-            let currentPage = 1;
-            let curentLines = 0;
-
+            let [currentPage, curentLines] = [1, 0];
             let body = poemDisplay(false, currentPage, curentLines, poemLines, pagesNum, 6);
+
+            const row = new ActionRowBuilder().addComponents(buttons);
             const filter = (i) => i.user.id === msg.author.id;
             await thinking.edit({content: `${msg.author}`, embeds: [informationEmbed]});
             const ReponseBody = await msg.channel.send({content: `${body.content}`});
-            const buttons = await msg.channel.send({ content: `صفحة ${body.currentPage} من ${pagesNum}`, components:[footer] });
-            const collector = buttons.createMessageComponentCollector({ componentType: ComponentType.Button, time: 300_000, filter});
+            const footer = await msg.channel.send({content: `صفحة ${body.currentPage} من ${pagesNum}`, components:[row]});
+            const collector = footer.createMessageComponentCollector({ componentType: ComponentType.Button, time: 300_000, filter});
 
             collector.on('collect', async interaction =>{
                 try {
@@ -70,7 +69,7 @@ module.exports = {
                     [currentPage, curentLines] = [body.currentPage, body.curentLines];
 
                     await ReponseBody.edit({content: `${body.content}`});
-                    await buttons.edit({ content: `صفحة ${body.currentPage} من ${pagesNum}`, components:[footer] });
+                    await footer.edit({ content: `صفحة ${body.currentPage} من ${pagesNum}`, components:[row] });
                 } catch (error) {
                     throw error;
                 }
@@ -78,8 +77,10 @@ module.exports = {
 
             collector.on('end', async () =>{
                 try {
-                    await thinking.edit({content: `${msg.author} \nلقد إنتهى الوقت المحدد❌\nيرجى المحاولة لاحقا ❤️`, embeds: []});
-                    await buttons.delete();
+                    informationEmbed.setDescription(`لقد إنتهى الوقت المحدد❌\nيرجى المحاولة لاحقا ❤️`).setColor('DarkGrey');
+                    await thinking.edit({embeds: [informationEmbed]});
+                    buttons.forEach(b => b.setDisabled(true));
+                    await footer.edit({components:[row]})
                     return;
                 } catch (error) {
                     throw error;

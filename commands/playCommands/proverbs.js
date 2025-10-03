@@ -8,8 +8,7 @@ function getPart(countryOrPart) {
     proverbs.forEach((proverb, countryIndex) => {
         proverb.data.forEach((part, partIndex) => {
             if(part.part.includes(countryOrPart)) pathTo.push({
-                'countryIndex': countryIndex,
-                'partIndex': partIndex
+                countryIndex, partIndex
             })
         })
     });
@@ -33,9 +32,10 @@ module.exports = {
 
             if(!part) throw new RandomErrors(`لم يتم العثور على طلبكم: \*\*${countryOrPart}\*\* 🥲`);
 
-            const randomProverb = random(random(part.sections).proverbs);
+            const randomsection = random(part.sections)
+            const randomProverb = random(randomsection.proverbs);
 
-            const country = part.country ?? item?.country ?? 'غير محدد';
+            const country = part.country ?? item?.country[0] ?? 'غير محدد';
 
             const avatar = msg.client.user.displayAvatarURL({ dynamic: true, size: 1024 });
             const informationEmbed = new EmbedBuilder()

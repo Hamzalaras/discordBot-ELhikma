@@ -1,6 +1,5 @@
-const {chromium} = require('playwright');
+const { chromium } = require('playwright');
 const { ScarpingError } = require('../centralUnits/errorUnit.js');
-const { random } = require('../centralUnits/usefulFenctions.js');
 
 async function expressionScarping(url){
     try {
@@ -12,7 +11,7 @@ async function expressionScarping(url){
         const randomExpression = await page.evaluate(() => {
 
             const items = document.querySelectorAll('.quote-container');
-            const chosenContainer = random(items);
+            const chosenContainer = items[Math.floor(Math.random() * items.length)];
             const quoteAuthor = chosenContainer.children[1].textContent.trim();
             const quoteText = chosenContainer.children[0].children[0].textContent.trim();
             const quoteSubject = chosenContainer.children[0].children[1].children[2].textContent.trim();
